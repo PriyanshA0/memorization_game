@@ -1,0 +1,38 @@
+buildscript {
+    ext.kotlin_version = '1.8.10' // Update Kotlin version if needed
+    repositories {
+        google()
+        mavenCentral()
+        jcenter() // Added for additional dependency support
+    }
+    dependencies {
+        classpath 'com.android.tools.build:gradle:8.1.2' // Update AGP version
+        classpath "org.jetbrains.kotlin:kotlin-gradle-plugin:$kotlin_version"
+    }
+}
+
+allprojects {
+    repositories {
+        google()
+        mavenCentral()
+        jcenter() // Some libraries may still use jcenter()
+    }
+}
+
+rootProject.buildDir = "../build"
+
+subprojects {
+    project.buildDir = "${rootProject.buildDir}/${project.name}"
+}
+
+subprojects {
+    afterEvaluate { project ->
+        if (project.hasProperty("android")) {
+            project.evaluationDependsOn(":app")
+        }
+    }
+}
+
+tasks.register("clean", Delete) {
+    delete rootProject.buildDir
+}
